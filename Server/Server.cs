@@ -382,9 +382,7 @@ namespace Assignment3TestSuite
                     {
                         if(path[3] != null)
                         {
-                            //Check the contents of the path. should be the ID in categories
-                           
-                            
+
                             
                             int num = 0;
                             if (Int32.TryParse(path[3], out num)) 
@@ -421,13 +419,21 @@ namespace Assignment3TestSuite
                         else
                         {
                             //read all the items from category
-            //TODO FIX THIS! it returns the right things, but it doesn't print the properly when converted to JSON later :c                
-                            foreach (Category cat in categories)
-                            {
-                                response.Body += JsonSerializer.Serialize<Category>(cat);   
-                               
-                            }
-                            
+                            response.Body += "[";
+                            for (int i = 0; i < categories.Count; i++)
+                                {
+                                    var cat = categories[i];
+
+                                    response.Body += JsonSerializer.Serialize<Category>(cat);
+
+                                //Makes sure we don't add a space, after the final element
+                                    if(i<categories.Count-1) response.Body += ",";
+
+                                }
+
+                            response.Body += "]"; 
+
+
                             Console.WriteLine(response.Body);
                             response.Status = "1 Ok";
                         }
