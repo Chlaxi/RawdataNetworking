@@ -8,7 +8,9 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-
+/* Made by Chloe Parbst for the RAWDATA 2019 Assignment 3
+ * Roskilde University
+ * */
 
 namespace Assignment3TestSuite
 {
@@ -559,42 +561,40 @@ namespace Assignment3TestSuite
             Byte[] bytes = new Byte[2048];
             String data = null;
 
-            // Get a stream object for reading and writing
             NetworkStream stream = client.GetStream();
 
-            //Solution to first test. If data is not available, the client closes.
-            int i;    
-            // Loop to receive all the data sent by the client.
-            while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
+            try
             {
+                int i;
+                // Loop to receive all the data sent by the client.
 
-                // Translate data bytes to a ASCII string.
-                data = System.Text.Encoding.UTF8.GetString(bytes, 0, i);
-                Console.WriteLine("Received: {0}", data);
+                while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
+                {
 
-                // Process the data sent by the client.
-               // data = data.ToLower();
-
-                var request = new Request();
-
+                    data = System.Text.Encoding.UTF8.GetString(bytes, 0, i);
+                    Console.WriteLine("Received: {0}", data);
 
 
-                var response = new Response();
-                response = CheckRequest(data);
-                
-                data = response.ToJson();
-                    
-                Console.WriteLine("Server Response Status: " + response.Status);
-                Console.WriteLine("Server Response Body: " + response.Body);
+                    var response = CheckRequest(data);
 
-             
-                byte[] msg = System.Text.Encoding.UTF8.GetBytes(data);
-            
+                    data = response.ToJson();
 
-                // Send back a response.
-                stream.Write(msg, 0, msg.Length);
-                Console.WriteLine("Sent: {0}", data);
-                break;
+                    Console.WriteLine("Server Response Status: " + response.Status);
+                    Console.WriteLine("Server Response Body: " + response.Body);
+
+
+                    byte[] msg = System.Text.Encoding.UTF8.GetBytes(data);
+
+
+                    // Send back a response.
+                    stream.Write(msg, 0, msg.Length);
+                    Console.WriteLine("Sent: {0}", data);
+                    break;
+                }
+            }
+            catch(IOException e)
+            {
+                Console.WriteLine("Excpetion "+e.GetType().Name);
             }
             
             // Shutdown and end connection
